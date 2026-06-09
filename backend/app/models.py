@@ -78,3 +78,14 @@ class ScopeChange(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     scenario = relationship("Scenario", back_populates="scope_changes")
+
+
+class LinkedAccount(Base):
+    __tablename__ = "linked_accounts"
+    id = Column(String, primary_key=True, default=gen_uuid)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    access_token = Column(String, nullable=False)
+    item_id = Column(String, nullable=False)
+    institution_name = Column(String)
+    last_synced_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)

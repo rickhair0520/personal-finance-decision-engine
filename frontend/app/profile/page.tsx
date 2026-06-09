@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Nav from "@/components/ui/Nav";
+import PlaidLink from "@/components/ui/PlaidLink";
 import { api, ProfileResponse, isLoggedIn } from "@/lib/api";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -139,6 +140,23 @@ export default function ProfilePage() {
         )}
 
         <div className="space-y-6">
+          <section className="bg-white rounded-xl border border-gray-200 p-5">
+            <h2 className="font-semibold text-gray-800 mb-1">Connect Bank Account</h2>
+            <p className="text-xs text-gray-500 mb-4">
+              Auto-fill your checking balance and monthly expenses from Wells Fargo.
+            </p>
+            <PlaidLink
+              onApply={(balance, monthlyExpenses) => {
+                setForm((prev) => ({
+                  ...prev,
+                  current_savings: balance,
+                  monthly_expenses: monthlyExpenses,
+                }));
+                save();
+              }}
+            />
+          </section>
+
           <section className="bg-white rounded-xl border border-gray-200 p-5">
             <h2 className="font-semibold text-gray-800 mb-4">Income</h2>
             <div className="grid grid-cols-2 gap-4">

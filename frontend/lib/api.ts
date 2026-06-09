@@ -95,6 +95,29 @@ export const api = {
       return request<RetirementData>("/retirement" + qs);
     },
   },
+  plaid: {
+    linkToken: () => request<{ link_token: string }>("/plaid/link-token", { method: "POST" }),
+    exchange: (public_token: string, institution_name: string) =>
+      request<{ ok: boolean; institution: string }>("/plaid/exchange-token", {
+        method: "POST",
+        body: JSON.stringify({ public_token, institution_name }),
+      }),
+    sync: () =>
+      request<{
+        institution: string;
+        checking_balance: number;
+        monthly_expenses_estimate: number;
+        transaction_count: number;
+        date_range: { start: string; end: string };
+        transactions: { name: string; amount: number; date: string; category: string }[];
+      }>("/plaid/sync"),
+    status: () =>
+      request<{ connected: boolean; institution?: string; last_synced_at?: string }>(
+        "/plaid/status"
+      ),
+    sandboxConnect: () =>
+      request<{ ok: boolean; institution: string }>("/plaid/sandbox-connect", { method: "POST" }),
+  },
 };
 
 // Types
