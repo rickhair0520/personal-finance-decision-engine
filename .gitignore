@@ -22,3 +22,6 @@ npm-debug.log*
 # OS
 .DS_Store
 *.swp
+
+# Superpowers brainstorming sessions
+.superpowers/
