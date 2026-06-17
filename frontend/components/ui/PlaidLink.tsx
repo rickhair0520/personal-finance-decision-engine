@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { usePlaidLink, PlaidLinkOnSuccess } from "react-plaid-link";
+import { usePlaidLink, type PlaidLinkOnSuccess } from "react-plaid-link";
 import { api } from "@/lib/api";
 import { fmt$$ } from "@/lib/utils";
 
@@ -44,7 +44,8 @@ export default function PlaidLink({ onApply }: Props) {
     []
   );
 
-  const { open, ready } = usePlaidLink({ token: linkToken || "", onSuccess });
+  // Initialize Plaid Link (hook is called for side effects even though open/ready aren't used)
+  usePlaidLink({ token: linkToken || "", onSuccess });
 
   async function handleSync() {
     setSyncing(true);
