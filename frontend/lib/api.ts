@@ -118,6 +118,43 @@ export const api = {
     sandboxConnect: () =>
       request<{ ok: boolean; institution: string }>("/plaid/sandbox-connect", { method: "POST" }),
   },
+  budget: {
+    listVersions: () => request<BudgetVersionSummary[]>("/budget/versions"),
+    createVersion: (name: string) =>
+      request<BudgetVersionSummary>("/budget/versions", {
+        method: "POST",
+        body: JSON.stringify({ name }),
+      }),
+    updateVersion: (id: string, data: { name?: string; is_baseline?: boolean }) =>
+      request<BudgetVersionSummary>(`/budget/versions/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    deleteVersion: (id: string) =>
+      request<{ ok: boolean }>(`/budget/versions/${id}`, { method: "DELETE" }),
+    duplicateVersion: (id: string) =>
+      request<BudgetVersionSummary>(`/budget/versions/${id}/duplicate`, { method: "POST" }),
+    getLines: (id: string) => request<BudgetLineItem[]>(`/budget/versions/${id}/lines`),
+    updateLines: (id: string, lines: BudgetLineItem[]) =>
+      request<{ ok: boolean; total: number }>(`/budget/versions/${id}/lines`, {
+        method: "PUT",
+        body: JSON.stringify(lines),
+      }),
+    parseImport: (file: File) => {
+      const form = new FormData();
+      form.append("file", file);
+      const token = getToken();
+      const headers: Record<string, string> = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      return fetch(`${BASE}/budget/import`, { method: "POST", headers, body: form })
+        .then((r) => r.json()) as Promise<{ rows: ImportRow[]; unmatched_count: number }>;
+    },
+    confirmImport: (name: string, rows: ImportRow[]) =>
+      request<BudgetVersionSummary>("/budget/import/confirm", {
+        method: "POST",
+        body: JSON.stringify({ name, rows: rows.map(r => ({ raw_label: r.raw_label, category: r.detected_category ?? r.raw_label, amount: r.amount })) }),
+      }),
+  },
 };
 
 // Types
@@ -244,4 +281,26 @@ export interface RetirementData {
   current_age: number;
   retirement_age: number;
   is_example: boolean;
+}
+
+export interface BudgetVersionSummary {
+  id: string;
+  name: string;
+  is_baseline: boolean;
+  total: number;
+  created_at: string;
+}
+
+export interface BudgetLineItem {
+  id: string;
+  category: string;
+  amount: number;
+  sort_order: number;
+}
+
+export interface ImportRow {
+  raw_label: string;
+  detected_category: string | null;
+  amount: number;
+  confidence: "high" | "low";
 }

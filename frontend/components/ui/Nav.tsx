@@ -6,6 +6,7 @@ import { clearToken } from "@/lib/api";
 const links = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/scenarios/new", label: "New Scenario" },
+  { href: "/budget", label: "Budget" },
   { href: "/retirement", label: "Retirement" },
   { href: "/profile", label: "Profile" },
 ];
