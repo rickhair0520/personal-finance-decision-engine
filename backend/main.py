@@ -7,6 +7,7 @@ from app.db.database import engine, Base
 from app import models  # noqa: F401 — registers ORM models
 from app.routers import auth, profile, dashboard, scenarios, retirement
 from app.routers import plaid
+from app.routers import budget
 
 Base.metadata.create_all(bind=engine)
 
@@ -26,6 +27,7 @@ app.include_router(dashboard.router, prefix="/api/v1")
 app.include_router(scenarios.router, prefix="/api/v1")
 app.include_router(retirement.router, prefix="/api/v1")
 app.include_router(plaid.router, prefix="/api/v1")
+app.include_router(budget.router, prefix="/api/v1")
 
 
 @app.get("/health")
