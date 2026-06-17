@@ -89,3 +89,34 @@ class LinkedAccount(Base):
     institution_name = Column(String)
     last_synced_at = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+DEFAULT_BUDGET_CATEGORIES = [
+    "Foundation", "Framing", "Roofing", "Exterior", "Electrical",
+    "Plumbing", "HVAC", "Insulation", "Drywall", "Flooring",
+    "Kitchen", "Bathrooms", "Interior Finishes", "Landscaping",
+    "General Contractor Fee", "Contingency",
+]
+
+
+class BudgetVersion(Base):
+    __tablename__ = "budget_versions"
+    id = Column(String, primary_key=True, default=gen_uuid)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    name = Column(String(100), nullable=False)
+    is_baseline = Column(Integer, default=0)  # 1 = true
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    lines = relationship("BudgetLine", back_populates="version", cascade="all, delete-orphan")
+
+
+class BudgetLine(Base):
+    __tablename__ = "budget_lines"
+    id = Column(String, primary_key=True, default=gen_uuid)
+    version_id = Column(String, ForeignKey("budget_versions.id", ondelete="CASCADE"), nullable=False)
+    category = Column(String(100), nullable=False)
+    amount = Column(Float, default=0.0)
+    sort_order = Column(Integer, default=0)
+
+    version = relationship("BudgetVersion", back_populates="lines")
