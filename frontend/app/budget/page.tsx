@@ -5,6 +5,7 @@ import Nav from "@/components/ui/Nav";
 import VersionCardRow from "@/components/budget/VersionCardRow";
 import LineItemTable from "@/components/budget/LineItemTable";
 import BudgetSummaryBar from "@/components/budget/BudgetSummaryBar";
+import VarianceAnalysisPanel from "@/components/budget/VarianceAnalysisPanel";
 import CompareDrawer from "@/components/budget/CompareDrawer";
 import { api, BudgetVersionSummary, isLoggedIn } from "@/lib/api";
 
@@ -138,6 +139,8 @@ export default function BudgetPage() {
                     Compare versions
                   </button>
                 </div>
+
+                <VarianceAnalysisPanel />
 
                 <LineItemTable
                   versionId={selected.id}
